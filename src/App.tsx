@@ -1,15 +1,15 @@
 import React from 'react'; 
 import './App.css'; 
-import { useWeather } from "./hooks";
-
-function App() {
-  const { } = useWeather();
+import  {UserWeather}  from "./components/user-weather";
+import { WeatherContextProvider } from "./hooks";
+function App() { 
   
   return (
-    <div className="App">
-      <header className="App-header">  
-      </header>
+    <WeatherContextProvider>
+    <div className="App">  
+      <UserWeather/>
     </div>
+    </WeatherContextProvider>
   );
 }
 

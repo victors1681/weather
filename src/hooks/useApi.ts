@@ -11,7 +11,10 @@ export interface IUseApi {
     request: boolean;
     success: boolean;
     fail: boolean;
+    getWeatherByLocation: ({longitude, latitude}:IUserCurrentLocation) => Promise<IWeather | undefined> 
+    getForecast: ({longitude, latitude}:IUserCurrentLocation) => Promise<IForecast | undefined>
 }
+
 
 export const useApi = () => {
     const [request, setRequest] = React.useState(false);
@@ -24,29 +27,51 @@ export const useApi = () => {
 
      /**
      * @Get Weather by current location
-     * 
-     * @return 
+     * @lon number longitude 
+     * @lat number latitude
+     * @return  IWeather 
      */
-    const getWeatherByLocation = async (): Promise<Array<any>> => {
+    const getWeatherByLocation = async ({longitude, latitude}:IUserCurrentLocation): Promise<IWeather | undefined> => {
         try {
             setStates(RequestStatus.request);
-            const result = await api.getWeatherByLocationApi();
+            const result = await api.getWeatherByLocationApi({longitude, latitude});
             if (result) {
                 setStates(RequestStatus.success);
                 return result.data;
             }
         } catch (error) {
             setStates(RequestStatus.fail);
-            return [];
+            return;
         }
-        return [];
+        return;
+    };
+    
+    /**
+     * Get forecast based on user current location
+     * @param param0 
+     */
+
+    const getForecast = async ({longitude, latitude}:IUserCurrentLocation): Promise<IForecast | undefined> => {
+        try {
+            setStates(RequestStatus.request);
+            const result = await api.getForecastApi({longitude, latitude});
+            if (result) {
+                setStates(RequestStatus.success);
+                return result.data;
+            }
+        } catch (error) {
+            setStates(RequestStatus.fail);
+            return;
+        }
+        return;
     };
  
     return {
         request,
         success,
         fail,
-        getWeatherByLocation
+        getWeatherByLocation,
+        getForecast
     }
 }
 
