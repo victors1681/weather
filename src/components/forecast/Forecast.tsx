@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { ForecastDetail} from "./ForecastDetail";
 
 const DateList = styled.ul`
-        display: flex;
+    display: flex;
     list-style: none; 
     flex-wrap: wrap;
     justify-content: space-between;
@@ -29,7 +29,7 @@ export const Forecast = () => {
     currentDate.setDate(currentDate.getDate() + 1);
     const [forecastSelected, setForecast] = React.useState(getShortDate(currentDate.toDateString()));
     const { getForecast } = useApi();
-    const { userCurrentLocation } = useWeather();
+    const { userCurrentLocation, request } = useWeather();
 
     const initForecast = React.useCallback(async () => {
         try{
@@ -53,12 +53,12 @@ export const Forecast = () => {
     
     const forecastDetailSelected = React.useCallback(()=> getForecastByDate(forecastSelected, forecastPayload), [forecastSelected, forecastPayload]);
 
-    return (
+    return ( request ? <div> Loading... </div> :
     <React.Fragment>
         <DateList>
-            {forecastPayload && Object.keys(forecastPayload).map( key => (<DateButton key={key} id={key} isActive={key === forecastSelected} onClick={selectDate(key)}><li>{key}</li></DateButton>)) }
+            {userCurrentLocation && forecastPayload && Object.keys(forecastPayload).map( key => (<DateButton key={key} id={key} isActive={key === forecastSelected} onClick={selectDate(key)}><li>{key}</li></DateButton>)) }
             </DateList>
-            {forecastDetailSelected && <ForecastDetail detail={forecastDetailSelected()}/>}
+            {userCurrentLocation && forecastDetailSelected && <ForecastDetail detail={forecastDetailSelected()}/>}
         </React.Fragment>)
 }
 

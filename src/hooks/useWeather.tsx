@@ -3,10 +3,12 @@ import { useApi } from "./useApi";
 import { getUserCurrentLocation } from "./services/getCurrentUserLocation";
 
 interface IUseWeather  { 
+    initUserLocation: () => Promise<void>
     getWeatherByLocation: ({longitude, latitude}:IUserCurrentLocation) => Promise<IWeather | undefined>
     currentWeather: IWeather | undefined
     geolocationMsg: string
     userCurrentLocation: IUserCurrentLocation | undefined,
+    showReIntent: boolean
     success: boolean 
     request: boolean
     fail: boolean
@@ -26,6 +28,7 @@ export const useWeatherContext = () =>{
     const [currentWeather, setCurrentWeather] = React.useState<IWeather | undefined>();
     const [userCurrentLocation, setUserCurrentLocation] = React.useState<IUserCurrentLocation | undefined>()
     const [geolocationMsg, setGeolocationMsg] = React.useState('');
+    const [showReIntent, setShowReIntent] = React.useState(false);
 
     const {getWeatherByLocation, success, request, fail } = useApi();
 
@@ -48,7 +51,8 @@ export const useWeatherContext = () =>{
  
       switch(error.code) {
         case error.PERMISSION_DENIED:
-            setGeolocationMsg("User denied the request for Geolocation.")
+            setShowReIntent(true)
+            setGeolocationMsg("Sorry we cannot display the weather based on your current location")
             break;
           case error.POSITION_UNAVAILABLE:
             setGeolocationMsg("Location information is unavailable.")
@@ -62,6 +66,7 @@ export const useWeatherContext = () =>{
         }
     }
     const initUserLocation = async () => {
+         setShowReIntent(false);
          //Get User location
          const isSupported = await getUserCurrentLocation({currentLocation, showErrors})
          if(!isSupported){
@@ -73,10 +78,12 @@ export const useWeatherContext = () =>{
        initUserLocation()
     }, [])
     return { 
+        initUserLocation,
         getWeatherByLocation,
         currentWeather,
         geolocationMsg,
         userCurrentLocation,
+        showReIntent,
         success, 
         request, 
         fail
