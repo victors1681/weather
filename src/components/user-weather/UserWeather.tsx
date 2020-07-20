@@ -3,25 +3,13 @@ import { useWeather } from "../../hooks";
 import styled from "styled-components";
 import { WeatherIcon} from "../weather-icon";
 import { kelvinToFahrenheit } from "../../utils/temperatures";
-import { Forecast } from "../forecast";
-
-const MainWrapper = styled.div`
-    background-color: white;
-    border-radius:  10px;
-    margin: 5em;
-    border: 1px solid #e8e8e8;
-    height: 100%;
-    min-height: 400px;
-    width: 100%;
-`;
 
 const Header = styled.div`
 .temp {
     font-size: 20px;
 }
 ul{
-    list-style: none;
-    text-align: right;
+    list-style: none; 
     margin: 10px;
 }
 p{
@@ -46,7 +34,7 @@ const Loading = styled.div`
 
 export const UserWeather = () => {
     
-    const { currentWeather, geolocationMsg, request } = useWeather();
+    const { currentWeather, geolocationMsg, request, showReIntent, initUserLocation } = useWeather();
 
     const renderWeatherInformation = React.useCallback(() => {
         
@@ -70,12 +58,13 @@ export const UserWeather = () => {
                 )
 
     }, [currentWeather]) 
+    
 
-    return ( <MainWrapper>  
+    return ( <React.Fragment>
             {request && <Loading>loading...</Loading>}
             {currentWeather ? renderWeatherInformation() : <DisplayError>{geolocationMsg}</DisplayError> }
-            <Forecast/>
-        </MainWrapper>
+            {showReIntent && <button onClick={initUserLocation}>Re-Intent</button>}
+            </React.Fragment> 
     )
 }
 
