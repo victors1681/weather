@@ -65,18 +65,19 @@ export const useWeatherContext = () =>{
             break;
         }
     }
-    const initUserLocation = async () => {
+    const initUserLocation = React.useCallback(async () => {
          setShowReIntent(false);
          //Get User location
          const isSupported = await getUserCurrentLocation({currentLocation, showErrors})
+         console.error("isSupported", isSupported)
          if(!isSupported){
             setGeolocationMsg("Geolocation is not supported by this browser.")
              console.error("Geolocation is not supported by this browser.");
          }
-    }
+    },[currentLocation])
     React.useEffect(()=>{
        initUserLocation()
-    }, [])
+    }, [initUserLocation])
     return { 
         initUserLocation,
         getWeatherByLocation,
